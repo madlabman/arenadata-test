@@ -4,6 +4,7 @@ import uuid
 
 import docker
 import docker.errors
+import json
 import pytest
 import requests
 import yaml
@@ -69,6 +70,26 @@ def yaml_template(request, tmp_path):
     stream = open(filename, 'w')
     yaml.dump(request.param, stream)
     return filename, request.param
+
+
+@pytest.fixture
+def uploaded_template(yaml_template):
+    """Prepare template and upload to the app"""
+
+    filename, data = yaml_template
+    response = api.upload_template(filename)
+    message = response.json()['message']
+    tmpl_id = message[message.find('=') + 1:]
+    return tmpl_id, data
+
+
+@pytest.fixture
+def installed_template(uploaded_template):
+    """Prepare template, upload and install to the app"""
+
+    tmpl_id, data = uploaded_template
+    api.install_template(tmpl_id)
+    return tmpl_id, data
 
 
 @pytest.fixture

@@ -1,3 +1,4 @@
+# Minimal valid dataset with no data
 yaml_empty_set = [[]]
 
 # Data for creating malformed template files
@@ -58,7 +59,8 @@ yaml_invalid_data = [
 
 # Data for creating valid template files
 yaml_valid_data = [
-    [],
+    # One item depends on another
+    # Buttons have to be disabled
     [
         {
             'id': 'parent-id',
@@ -70,6 +72,7 @@ yaml_valid_data = [
             'depends': 'parent-id'
         }
     ],
+    # Item with link
     [
         {
             'id': 'some-id',
@@ -77,6 +80,7 @@ yaml_valid_data = [
             'link': 'https://yandex.ru'
         }
     ],
+    # Just another one valid example
     [
         {
             'id': 'parent-id',
