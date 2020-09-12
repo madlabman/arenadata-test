@@ -14,7 +14,7 @@ def test_no_template_installed(browser):
     assert browser.find_element(By.XPATH, NO_TEMPLATE_XPATH)
 
 
-@pytest.mark.parametrize('yaml_template', dataset.yaml_empty_set, indirect=True)
+@pytest.mark.parametrize('yaml_template', dataset.yaml_empty_template, indirect=True)
 def test_install_empty_template(uploaded_template, browser):
     tmpl_id, _ = uploaded_template
     api.install_template(tmpl_id)

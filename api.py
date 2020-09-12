@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 APP_URI = 'http://localhost:5000'
@@ -21,3 +23,9 @@ def upload_template(filename=None, data=None):
     if filename:
         files = {'file': open(filename, 'rb')}
     return requests.put(f'{API_BASE}/templates', files=files, data=data)
+
+
+def custom_id_data(tmpl_id):
+    """Returns object to send as api request data"""
+
+    return {'data': json.dumps({'tmpl_id': tmpl_id})}
