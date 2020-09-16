@@ -66,7 +66,7 @@ def docker_container():
 def yaml_template(request, tmp_path):
     """Fixture which dump data to the YAML file and return its full name"""
 
-    filename = f'{tmp_path}{os.sep}{uuid.uuid4()}.yaml'
+    filename = os.path.join(tmp_path, f'{uuid.uuid4()}.yaml')
     stream = open(filename, 'w')
     yaml.dump(request.param, stream)
     return filename, request.param
