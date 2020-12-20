@@ -41,7 +41,9 @@ def docker_container():
     client = docker.from_env()
 
     # If an image with name test_app is not presented
-    if not client.images.list(name='test_app'):
+    try:
+        client.images.get('test_app')
+    except docker.errors.ImageNotFound:
         # Building an image from dockerfile
         print('Building image from dockerfile')
         client.images.build(path='test_app/', tag='test_app:latest')
