@@ -4,7 +4,6 @@ import uuid
 
 import docker
 import docker.errors
-import json
 import pytest
 import requests
 import yaml
@@ -17,7 +16,7 @@ import api
 def wait_for_app(trials=3):
     """Wait for application to be available for requests"""
 
-    for i in range(0, trials):
+    for i in range(trials):
         # Wait for 100 ms
         time.sleep(0.100)
         try:
