@@ -11,6 +11,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 import api
+from config import app_config
 
 
 def wait_for_app(trials=3):
@@ -20,7 +21,7 @@ def wait_for_app(trials=3):
         # Wait for 100 ms
         time.sleep(0.100)
         try:
-            response = requests.get(api.APP_URI)
+            response = requests.get(api.get_app_uri())
             if response.status_code == 200:
                 return True
         except requests.exceptions.ConnectionError:
@@ -48,9 +49,12 @@ def docker_container():
         client.images.build(path='test_app/', tag='test_app:latest')
 
     # Run container in detach state
-    app_container = client.containers.run('test_app:latest', ports={'5000/tcp': 5000}, detach=True)
+    app_container = client.containers.run('test_app:latest',
+                                          ports={app_config.container_port: None},
+                                          detach=True, remove=True)
     print(f'Container <{app_container.short_id}> created')
-
+    app_container.reload()  # Update cached attrs
+    app_config.port = int(app_container.ports[app_config.container_port][0]['HostPort'])    # Find exposed port
     # Check if application is available
     if not wait_for_app():
         raise SystemExit('Unable to reach test application')
@@ -60,7 +64,6 @@ def docker_container():
 
     # Teardown
     app_container.kill()
-    client.containers.prune()
 
 
 @pytest.fixture
@@ -68,8 +71,8 @@ def yaml_template(request, tmp_path):
     """Fixture which dump data to the YAML file and return its full name"""
 
     filename = os.path.join(tmp_path, f'{uuid.uuid4()}.yaml')
-    stream = open(filename, 'w')
-    yaml.dump(request.param, stream)
+    with open(filename, 'w') as stream:
+        yaml.dump(request.param, stream)
     return filename, request.param
 
 

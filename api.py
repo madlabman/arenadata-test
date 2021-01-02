@@ -1,28 +1,33 @@
 import json
-
 import requests
+from config import app_config
 
-APP_URI = 'http://localhost:5000'
-API_BASE = 'http://localhost:5000/api/v1'
+
+def get_app_uri():
+    return f'{app_config.host}:{app_config.port}'
+
+
+def get_api_uri():
+    return f'{get_app_uri()}{app_config.api_base}'
 
 
 def get_templates():
-    return requests.get(f'{API_BASE}/templates')
+    return requests.get(f'{get_api_uri()}/templates')
 
 
 def remove_template(tmpl_id):
-    return requests.delete(f'{API_BASE}/templates/{tmpl_id}')
+    return requests.delete(f'{get_api_uri()}/templates/{tmpl_id}')
 
 
 def install_template(tmpl_id):
-    return requests.post(f'{API_BASE}/templates/{tmpl_id}/install')
+    return requests.post(f'{get_api_uri()}/templates/{tmpl_id}/install')
 
 
 def upload_template(filename=None, data=None):
     files = None
     if filename:
         files = {'file': open(filename, 'rb')}
-    return requests.put(f'{API_BASE}/templates', files=files, data=data)
+    return requests.put(f'{get_api_uri()}/templates', files=files, data=data)
 
 
 def custom_id_data(tmpl_id):
